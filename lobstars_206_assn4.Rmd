@@ -1,0 +1,47 @@
+---
+title: 'Assignment 4: LobStars in the Santa Barbara Channel'
+author: "Natalie Dornan, Daphne Virlar-Knight"
+date: "November 13, 2018"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+## Load packages and read in data
+
+```{r}
+library(tidyverse)
+library(kableExtra)
+library(plotly)
+
+lobstar_abs <- read_csv("lobster_size_abundance.csv") #data frame with lobster abundance datac
+
+lobstar_traps <- read_csv("lobster_traps.csv") # data frame with lobster trap data
+
+
+```
+
+Natalie: Let's look at lobStar data with exploratory graphs
+
+```{r}
+
+## Need to decide what do do with the NR data under SIZE column: "-99999". Change to 0?
+
+abundance_hist <- ggplot(lobstar_abs, (aes(x = SIZE))) +
+  geom_histogram() +
+  facet_wrap(~ SITE, scale = "free") +
+  theme_classic()
+  
+abundance_scatter <- ggplot(lobstar_abs, (aes(x = SIZE, y = YEAR))) +
+  geom_point(aes(color = "SITE")) +
+  facet_wrap(~ SITE, scale = "free") +
+  theme_classic()
+
+abundance_scatter
+
+```
+
+
+
