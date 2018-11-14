@@ -34,7 +34,7 @@ abundance_hist <- ggplot(lobstar_abs, (aes(x = SIZE))) +
   facet_wrap(~ SITE, scale = "free") +
   theme_classic()
   
-abundance_scatter <- ggplot(lobstar_abs, (aes(x = SIZE, y = YEAR))) +
+abundance_scatter <- ggplot(lobstar_abs, (aes(x = YEAR, y = SIZE))) +
   geom_point(aes(color = "SITE")) +
   facet_wrap(~ SITE, scale = "free") +
   theme_classic()
