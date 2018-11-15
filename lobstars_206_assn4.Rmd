@@ -123,24 +123,18 @@ lobstar_sum_table_17
 
 #the next two graphs show the same data and trend. Just need to decided which we want to use.
 
-abs_site_bar <- ggplot(lobstar_abs_one, (aes(x = YEAR, y = SUM))) +
-  geom_col() +
-  scale_y_continuous(expand = c(0,0))+
-  xlab("Abundance")+
-  ylab("Frequency")+
-  facet_wrap(~ SITE, scale = "free") +
-  theme_classic()
+
+
+#-----------------------------ABUNDANCE AND TRAP PRESSURE--------------------------------
 
 abs_site_scatter <- ggplot(lobstar_abs_one, aes(x = YEAR, y = SUM)) +
   geom_point() +
-  geom_line()+
-  theme_classic()+
-  facet_wrap(~ SITE, scale = "free")
+  geom_line(aes(col = SITE))+
+  theme_classic()
   
-abs_site_scatter; abs_site_bar
+abs_site_scatter
 
 
-#-----------------------------------TRAP PRESSURE--------------------------------
 
 trap_pres_one <- lobstar_traps %>% 
   group_by(YEAR, SITE) %>% 
@@ -151,10 +145,9 @@ trap_pres_one <- lobstar_traps %>%
 
 trap_pres_scatter <- ggplot(trap_pres_one, aes(x = YEAR, y = SUM))+
   geom_point()+
-  geom_line()+
+  geom_line(aes(col = SITE))+
   theme_classic()+
-  ylab("Trap Count")+
-  facet_wrap(~ SITE, scale = "free")
+  ylab("Trap Count")
 
 trap_pres_scatter
 
