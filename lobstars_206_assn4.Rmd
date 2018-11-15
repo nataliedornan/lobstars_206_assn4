@@ -11,7 +11,9 @@ knitr::opts_chunk$set(echo = TRUE)
 
 ## Load packages and read in data
 
-```{r}
+```{r, include=FALSE}
+
+# install.packages("vcdExtra") Natalie installed new package
 library(tidyverse)
 library(kableExtra)
 library(plotly)
@@ -24,31 +26,11 @@ lobstar_traps <- as.data.frame(read_csv("lobster_traps.csv")) # data frame with 
 
 ```
 
-Natalie: Let's look at lobStar data with exploratory graphs
-
-```{r, echo= FALSE}
-
-## Need to decide what do do with the NR data under SIZE column: "-99999". Change to 0?
-
-abundance_hist <- ggplot(lobstar_abs, (aes(x = SIZE))) +
-  geom_histogram() +
-  facet_wrap(~ SITE, scale = "free") +
-  theme_classic()
-  
-abundance_scatter <- ggplot(lobstar_abs, (aes(x = YEAR, y = SIZE))) +
-  geom_point(aes(color = "SITE")) +
-  facet_wrap(~ SITE, scale = "free") +
-  theme_classic()
-
-abundance_scatter
-
-```
-
-
 Daphne: Created graphs for question 1, but not sure they're "complete enough".
+Natalie: Added abundace summary tables
 
 1. Lobster abundance and fishing pressure
-```{r}
+```{r, echo=FALSE}
 #----------------------------------ABUNDANCE--------------------------------
 #Describe trends in lobster abundance (counts) and fishing pressure (trap buoys) at the five locations from 2012 - 2017. Ignore transect information - we are only interested in evaluating abundance and pressure on the order of SITE.
 
@@ -60,6 +42,82 @@ lobstar_abs_one <- lobstar_abs %>%
   summarize(
     SUM = sum(COUNT)
   )
+
+#### Nice work Daphne! I'll create a new dataframe for potential summary table
+
+lobstar_summary <- lobstar_abs %>% 
+  select(-SBC_LTER_TRANSECT, -LOBSTER_TRANSECT) %>% 
+  mutate(SIZE = replace(SIZE, SIZE==-99999, 0)) %>% 
+  group_by(YEAR, SITE) %>% 
+  summarize(
+    mean_size = round(mean(SIZE),2),
+    median_size = round(median(SIZE),2),
+    max_size = round(max(SIZE),2),
+    sd_size = round(sd(SIZE),2),
+    total_observations = sum(COUNT),
+    sample_size = length(SIZE))
+
+## Summary tables by year. A table of all years was too long, so N split them up
+##2012
+
+lobstar_sum_table_12 <- lobstar_summary %>%
+  filter(YEAR == "2012") %>%
+  kable(align = "c", col.names = c("Year", "Site", "Mean", "Median", "Maximum", "Standard Deviation", "# Lobstars Observed", "Sample Size (n)")) %>%
+  kable_styling(bootstrap_options = c("striped", "consensed"), full_width = F) %>%
+  add_header_above(c("Lobster Abundance at Different Sites in the Santa Barbara Channel, 2012" = 8)) # add header above table columns
+
+lobstar_sum_table_12
+
+##2013
+
+lobstar_sum_table_13 <- lobstar_summary %>%
+  filter(YEAR == "2013") %>%
+  kable(align = "c", col.names = c("Year", "Site", "Mean", "Median", "Maximum", "Standard Deviation", "# Lobstars Observed", "Sample Size (n)")) %>%
+  kable_styling(bootstrap_options = c("striped", "consensed"), full_width = F) %>%
+  add_header_above(c("Lobster Abundance at Different Sites in the Santa Barbara Channel, 2013" = 8)) # add header above table columns
+
+lobstar_sum_table_13
+
+##2014
+
+lobstar_sum_table_14 <- lobstar_summary %>%
+  filter(YEAR == "2014") %>%
+  kable(align = "c", col.names = c("Year", "Site", "Mean", "Median", "Maximum", "Standard Deviation", "# Lobstars Observed", "Sample Size (n)")) %>%
+  kable_styling(bootstrap_options = c("striped", "consensed"), full_width = F) %>%
+  add_header_above(c("Lobster Abundance at Different Sites in the Santa Barbara Channel, 2014" = 8)) # add header above table columns
+
+lobstar_sum_table_14
+
+##2015
+
+lobstar_sum_table_15 <- lobstar_summary %>%
+  filter(YEAR == "2015") %>%
+  kable(align = "c", col.names = c("Year", "Site", "Mean", "Median", "Maximum", "Standard Deviation", "# Lobstars Observed", "Sample Size (n)")) %>%
+  kable_styling(bootstrap_options = c("striped", "consensed"), full_width = F) %>%
+  add_header_above(c("Lobster Abundance at Different Sites in the Santa Barbara Channel, 2015" = 8)) # add header above table columns
+
+lobstar_sum_table_15
+
+##2016
+
+lobstar_sum_table_16 <- lobstar_summary %>%
+  filter(YEAR == "2016") %>%
+  kable(align = "c", col.names = c("Year", "Site", "Mean", "Median", "Maximum", "Standard Deviation", "# Lobstars Observed", "Sample Size (n)")) %>%
+  kable_styling(bootstrap_options = c("striped", "consensed"), full_width = F) %>%
+  add_header_above(c("Lobster Abundance at Different Sites in the Santa Barbara Channel, 2016" = 8)) # add header above table columns
+
+lobstar_sum_table_16
+
+##2017
+
+lobstar_sum_table_17 <- lobstar_summary %>%
+  filter(YEAR == "2017") %>%
+  kable(align = "c", col.names = c("Year", "Site", "Mean", "Median", "Maximum", "Standard Deviation", "# Lobstars Observed", "Sample Size (n)")) %>%
+  kable_styling(bootstrap_options = c("striped", "consensed"), full_width = F) %>%
+  add_header_above(c("Lobster Abundance at Different Sites in the Santa Barbara Channel, 2017" = 8)) # add header above table columns
+
+lobstar_sum_table_17
+
 
 #Creating histograms of lobster abundance and fishing pressure by site. Maybe use a kable table to summarize information? Thinking out loud. 
 
