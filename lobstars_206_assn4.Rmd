@@ -15,17 +15,18 @@ knitr::opts_chunk$set(echo = TRUE)
 library(tidyverse)
 library(kableExtra)
 library(plotly)
+library(vcdExtra)
 
 lobstar_abs <- read_csv("lobster_size_abundance.csv") #data frame with lobster abundance datac
 
-lobstar_traps <- read_csv("lobster_traps.csv") # data frame with lobster trap data
+lobstar_traps <- as.data.frame(read_csv("lobster_traps.csv")) # data frame with lobster trap data
 
 
 ```
 
 Natalie: Let's look at lobStar data with exploratory graphs
 
-```{r}
+```{r, echo= FALSE}
 
 ## Need to decide what do do with the NR data under SIZE column: "-99999". Change to 0?
 
@@ -44,4 +45,40 @@ abundance_scatter
 ```
 
 
+Daphne: 
+
+1. Lobster abundance and fishing pressure
+```{r}
+#----------------------------------ABUNDANCE--------------------------------
+#Describe trends in lobster abundance (counts) and fishing pressure (trap buoys) at the five locations from 2012 - 2017. Ignore transect information - we are only interested in evaluating abundance and pressure on the order of SITE.
+
+#getting rid of transect data, and changing -99999 to 0
+lobstar_abs_one <- lobstar_abs %>% 
+  select(-SBC_LTER_TRANSECT, -LOBSTER_TRANSECT) %>% 
+  mutate(SIZE = replace(SIZE, SIZE==-99999, 0))
+
+
+#Creating histograms of lobster abundance and fishing pressure by site. Maybe use a kable table to summarize information? Thinking out loud. 
+
+abs_site_graph <- ggplot(lobstar_abs, (aes(x = YEAR, y = COUNT))) +
+  geom_col() +
+  scale_y_continuous(expand = c(0,0))+
+  xlab("Abundance")+
+  ylab("Frequency")+
+  facet_wrap(~ SITE, scale = "free") +
+  theme_classic()
+
+abs_site_graph
+
+#-----------------------------------TRAP PRESSURE--------------------------------
+
+trap_pres <- lobstar_traps %>% 
+  expand.dft(freq = "TRAPS")
+  
+
+
+
+
+
+```
 
