@@ -45,7 +45,7 @@ abundance_scatter
 ```
 
 
-Daphne: 
+Daphne: Created graphs for question 1, but not sure they're "complete enough".
 
 1. Lobster abundance and fishing pressure
 ```{r}
@@ -55,12 +55,17 @@ Daphne:
 #getting rid of transect data, and changing -99999 to 0
 lobstar_abs_one <- lobstar_abs %>% 
   select(-SBC_LTER_TRANSECT, -LOBSTER_TRANSECT) %>% 
-  mutate(SIZE = replace(SIZE, SIZE==-99999, 0))
-
+  mutate(SIZE = replace(SIZE, SIZE==-99999, 0)) %>% 
+  group_by(YEAR, SITE) %>% 
+  summarize(
+    SUM = sum(COUNT)
+  )
 
 #Creating histograms of lobster abundance and fishing pressure by site. Maybe use a kable table to summarize information? Thinking out loud. 
 
-abs_site_graph <- ggplot(lobstar_abs, (aes(x = YEAR, y = COUNT))) +
+#the next two graphs show the same data and trend. Just need to decided which we want to use.
+
+abs_site_bar <- ggplot(lobstar_abs_one, (aes(x = YEAR, y = SUM))) +
   geom_col() +
   scale_y_continuous(expand = c(0,0))+
   xlab("Abundance")+
@@ -68,17 +73,39 @@ abs_site_graph <- ggplot(lobstar_abs, (aes(x = YEAR, y = COUNT))) +
   facet_wrap(~ SITE, scale = "free") +
   theme_classic()
 
-abs_site_graph
+abs_site_scatter <- ggplot(lobstar_abs_one, aes(x = YEAR, y = SUM)) +
+  geom_point() +
+  geom_line()+
+  theme_classic()+
+  facet_wrap(~ SITE, scale = "free")
+  
+  
+abs_site_scatter; abs_site_bar
 
 #-----------------------------------TRAP PRESSURE--------------------------------
 
-trap_pres <- lobstar_traps %>% 
+trap_pres_one <- lobstar_traps %>% 
+  group_by(YEAR, SITE) %>% 
+  summarize(
+    SUM = sum(TRAPS)
+  ) %>% 
+  filter(SITE !="ABUR", SITE != "AHND to AQUE", SITE != "AHND", SITE != "GOLB")
+
+trap_pres_scatter <- ggplot(trap_pres_one, aes(x = YEAR, y = SUM))+
+  geom_point()+
+  geom_line()+
+  theme_classic()+
+  ylab("Trap Count")+
+  facet_wrap(~ SITE, scale = "free")
+
+trap_pres_scatter
+
+```
+
+
+
+```{r}
+trap_pres_two <- lobstar_traps %>% 
   expand.dft(freq = "TRAPS")
-  
-
-
-
-
-
 ```
 
