@@ -119,7 +119,7 @@ lobstar_sum_table_17 <- lobstar_summary %>%
 lobstar_sum_table_17
 
 
-#Creating histograms of lobster abundance and fishing pressure by site. Maybe use a kable table to summarize information? Thinking out loud. 
+#Creating histograms of lobster abundance and fishing pressure by site. Maybe use a kable table to summarize information? Thinking out loud. ND: created tables by year. I think it's helpful, but may want to brainstorm best table visualization.
 
 #the next two graphs show the same data and trend. Just need to decided which we want to use.
 
@@ -137,8 +137,8 @@ abs_site_scatter <- ggplot(lobstar_abs_one, aes(x = YEAR, y = SUM)) +
   theme_classic()+
   facet_wrap(~ SITE, scale = "free")
   
-  
 abs_site_scatter; abs_site_bar
+
 
 #-----------------------------------TRAP PRESSURE--------------------------------
 
@@ -160,7 +160,7 @@ trap_pres_scatter
 
 ```
 
-
+Natalie RE: graphs. I think for time series data using the scatter is a little easier to digest quickly, especially since we will be comparing abundance to pressure. If we were looking at multiple species then the bar graph would be better. Also, maybe for tables we should merge some data to show trap trends by site and year too. Thoughts?   
 
 ```{r}
 trap_pres_two <- lobstar_traps %>% 
