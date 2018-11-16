@@ -155,11 +155,9 @@ qq_plot <- ggplot(lobstar_abs_tidy, aes(sample=SIZE)) +
 abs_site_scatter <- ggplot(lobstar_abs_one, aes(x = YEAR, y = SUM)) +
   geom_point() +
   geom_line(aes(col = SITE))+
+  ggtitle("Abundance of Lobsters")+
+  ylab("Count")+
   theme_classic()
-  
-abs_site_scatter
-
-
 
 trap_pres_one <- lobstar_traps %>% 
   group_by(YEAR, SITE) %>% 
@@ -172,16 +170,30 @@ trap_pres_scatter <- ggplot(trap_pres_one, aes(x = YEAR, y = SUM))+
   geom_point()+
   geom_line(aes(col = SITE))+
   theme_classic()+
-  ylab("Trap Count")
+  ggtitle("Fishing Pressure")+
+  ylab("Trap Buoys")
 
 abs_site_scatter; trap_pres_scatter
 
 ```
 
-Natalie RE: graphs. I think for time series data using the scatter is a little easier to digest quickly, especially since we will be comparing abundance to pressure. If we were looking at multiple species then the bar graph would be better. Also, maybe for tables we should merge some data to show trap trends by site and year too. Thoughts?   
+Natalie RE: graphs. I think for time series data using the scatter is a little easier to digest quickly, especially since we will be comparing abundance to pressure. If we were looking at multiple species then the bar graph would be better. Also, maybe for tables we should merge some data to show trap trends by site and year too. Thoughts? 
 
+Daphne RE: graphs. 
+        I think merging the data for abundance v traps as a table makes more sense than showing it in a graph. 
+        Also, I think for all graphs we should export them and work on them in word or a google doc. Creating a a full on report in markdown sounds like more of a pain than it's worth. 
+
+
+
+Question 2:
 ```{r}
 trap_pres_two <- lobstar_traps %>% 
   expand.dft(freq = "TRAPS")
+
+
+#I think we should use a bar/column graph, and add error bars and the letters indicating what's significant. Just an idea.
+size_comparison <- ggplot(trap_pres_two, )
+
+
 ```
 
