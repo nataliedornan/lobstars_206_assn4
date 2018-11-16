@@ -31,7 +31,7 @@ Natalie: Added abundace summary tables
 
 1. Lobster abundance and fishing pressure
 ```{r, echo=FALSE}
-#----------------------------------ABUNDANCE--------------------------------
+#-----------------------------------TABLE CREATIONS--------------------------------------
 #Describe trends in lobster abundance (counts) and fishing pressure (trap buoys) at the five locations from 2012 - 2017. Ignore transect information - we are only interested in evaluating abundance and pressure on the order of SITE.
 
 #getting rid of transect data, and changing -99999 to 0
@@ -123,8 +123,33 @@ lobstar_sum_table_17
 
 #the next two graphs show the same data and trend. Just need to decided which we want to use.
 
+```
 
 
+
+```{r}
+
+#------------------------------EXPLORATORY DATA ANALYSIS---------------------------------
+lobstar_abs_tidy <- lobstar_abs %>% 
+  filter(COUNT != "0")
+
+
+hist <- ggplot(lobstar_abs_tidy, aes(x=SIZE)) +
+  geom_histogram() +
+  facet_wrap(~ SITE)
+
+qq_plot <- ggplot(lobstar_abs_tidy, aes(sample=SIZE)) +
+  geom_qq() +
+  facet_wrap(~ SITE)
+
+#everything's fine
+
+
+```
+
+
+
+```{r}
 #-----------------------------ABUNDANCE AND TRAP PRESSURE--------------------------------
 
 abs_site_scatter <- ggplot(lobstar_abs_one, aes(x = YEAR, y = SUM)) +
@@ -149,7 +174,7 @@ trap_pres_scatter <- ggplot(trap_pres_one, aes(x = YEAR, y = SUM))+
   theme_classic()+
   ylab("Trap Count")
 
-trap_pres_scatter
+abs_site_scatter; trap_pres_scatter
 
 ```
 
