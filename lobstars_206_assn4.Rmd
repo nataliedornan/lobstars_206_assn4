@@ -158,23 +158,32 @@ abs_site_scatter <- ggplot(lobstar_abs_one, aes(x = YEAR, y = SUM)) +
   ggtitle("Abundance of Lobsters")+
   ylab("Count")+
   theme_classic()
+abs_site_scatter
 
+
+#Take out sites IVEE and NAPL
 trap_pres_one <- lobstar_traps %>% 
   group_by(YEAR, SITE) %>% 
   summarize(
     SUM = sum(TRAPS)
   ) %>% 
-  filter(SITE !="ABUR", SITE != "AHND to AQUE", SITE != "AHND", SITE != "GOLB")
+  filter(SITE !="ABUR", SITE != "AHND to AQUE", SITE != "AHND", SITE != "GOLB", SITE != "NAPL")
+
+
 
 trap_pres_scatter <- ggplot(trap_pres_one, aes(x = YEAR, y = SUM))+
   geom_point()+
   geom_line(aes(col = SITE))+
   theme_classic()+
-  ggtitle("Fishing Pressure")+
+  ggtitle("Fishing Pressure \n")+
   ylab("Trap Buoys")
 
-abs_site_scatter; trap_pres_scatter
 
+trap_pres_scatter2 <-trap_pres_scatter + scale_colour_discrete(
+                            breaks=c("AQUE", "CARP", "IVEE", "MOHK"),
+                            labels=c("AQUE", "CARP", "IVEE & NAPL", "MOHK"))
+
+trap_pres_scatter2
 ```
 
 Natalie RE: graphs. I think for time series data using the scatter is a little easier to digest quickly, especially since we will be comparing abundance to pressure. If we were looking at multiple species then the bar graph would be better. Also, maybe for tables we should merge some data to show trap trends by site and year too. Thoughts? 
