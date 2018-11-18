@@ -243,7 +243,7 @@ lobstah_sum <- summary(penguin_aov)
 
 lobstah_sum ## ANOVA Result: weak significance? (p=0.0354)
 
-lobstah_ph <- TukeyHSD(lobstah_aov)
+lobstah_ph <- TukeyHSD(lobstah_aov) #Tukey's post hoc
 
 lobstah_ph ## Confirmed one significant difference between sizes at NAPL and IVEE
 ```
@@ -271,6 +271,52 @@ MPA_Graph_12 <- ggplot(MPA12, aes(x= SITE, y= SIZE))+
 
 
 MPA_Graph_12 + theme(panel.spacing = unit(3, "lines"))
+
+## Testing differences in means between carapace length in protected and non-protected sites
+
+##H0: There is no difference in carapace lengths between protected and non-protected sites
+##HA: There is a difference in carapace lenths between protected and nonprotected sites
+
+##2012
+mpa12_protected <- MPA12 %>%
+  filter(PROTECTED == "MPA")
+      
+mpa12_unprotected <- MPA12 %>%
+  filter(PROTECTED == "Non-MPA")
+
+mpa12_t <- t.test(mpa12_protected$SIZE, mpa12_unprotected$SIZE)
+
+mpa12_t ## p = 0.1806
+
+
+##2017
+mpa17_protected <- MPA17 %>%
+  filter(PROTECTED == "MPA")
+      
+mpa17_unprotected <- MPA17 %>%
+  filter(PROTECTED == "Non-MPA")
+
+mpa17_t <- t.test(mpa17_protected$SIZE, mpa17_unprotected$SIZE)
+
+mpa17_t
+
+## Between years
+
+comp_t <- t.test(mpa12_protected$SIZE, mpa17_protected$SIZE)
+
+comp_t
+
+## At IVEE
+
+ivee12 <- mpa12_protected %>%
+  filter(SITE == "IVEE")
+
+ivee17 <- mpa17_protected %>%
+  filter(SITE == "IVEE")
+
+ivee_t <- t.test(ivee12$SIZE, ivee17$SIZE)
+
+ivee_t
 
 ```
 
