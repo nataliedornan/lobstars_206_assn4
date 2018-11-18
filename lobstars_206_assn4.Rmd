@@ -188,12 +188,33 @@ Daphne RE: graphs.
 Question 2:
 ```{r}
 trap_pres_two <- lobstar_traps %>% 
-  expand.dft(freq = "TRAPS")
+  expand.dft(freq = "TRAPS") %>%
+  summarize(
+    mean_body = round(mean(SIZE),2),
+    sd_body = round(sd(SIZE),2),
+  )
+   
 
+
+```
+
+Lobstah carapace length (mm)
+```{r}
+
+lobstah_body <- lobstar_abs_tidy %>%
+  expand.dft(freq = "COUNT")
 
 #I think we should use a bar/column graph, and add error bars and the letters indicating what's significant. Just an idea.
-size_comparison <- ggplot(trap_pres_two, )
 
+lobstah_boxplot <- filter(lobstah_body, YEAR == "2017") %>%
+  ggplot(aes(x = SITE, y = SIZE)) + 
+  geom_boxplot(aes(color = SITE), width = 0.35) +
+  labs(x = "Site", y = "Carapace Length (mm)") +
+  theme_classic() +
+  theme(legend.position = "none") +
+  ggtitle("Carapice Length of Lobsters at Different Sites in the SB Channel")
+
+lobstah_boxplot
 
 ```
 
