@@ -18,6 +18,8 @@ library(tidyverse)
 library(kableExtra)
 library(plotly)
 library(vcdExtra)
+library(magrittr)
+library(car)
 
 lobstar_abs <- read_csv("lobster_size_abundance.csv") #data frame with lobster abundance datac
 
@@ -223,7 +225,22 @@ lobstah_boxplot <- filter(lobstah_body, YEAR == "2017") %>%
   theme(legend.position = "none") +
   ggtitle("Carapice Length of Lobsters at Different Sites in the SB Channel")
 
-lobstah_boxplot
+
+## Levenes test for varience
+
+variences <- lobstah_body %>% 
+  group_by(SITE) %>% 
+  summarize(
+    mean = mean(SIZE),
+    sd = sd(SIZE),
+    variance = var(SIZE)
+  )
+
+variences
+
+lobstah_levene <- leveneTest(SIZE ~ SITE, data = lobstah_body)
+
+lobstah_levene
 
 ```
 
