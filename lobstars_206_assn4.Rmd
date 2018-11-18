@@ -198,12 +198,11 @@ Daphne RE: graphs.
 
 Question 2:
 ```{r}
-trap_pres_two <- lobstar_traps %>% 
-  expand.dft(freq = "TRAPS") %>%
-  summarize(
-    mean_body = round(mean(SIZE),2),
-    sd_body = round(sd(SIZE),2),
-  )
+#trap_pres_two <- lobstar_traps %>% 
+ # expand.dft(freq = "TRAPS") %>%
+  #summarize(
+   # mean_body = round(mean(SIZE),2),
+    #sd_body = round(sd(SIZE),2))
    
 
 
@@ -239,7 +238,7 @@ lobstah_levene # Levenes test results
 
 lobstah_aov <- aov(SIZE ~ SITE, data = lobstah_body)
 
-lobstah_sum <- summary(penguin_aov)
+lobstah_sum <- summary(lobstah_aov)
 
 lobstah_sum ## ANOVA Result: weak significance? (p=0.0354)
 
@@ -271,6 +270,43 @@ MPA_Graph_12 <- ggplot(MPA12, aes(x= SITE, y= SIZE))+
 
 
 MPA_Graph_12 + theme(panel.spacing = unit(3, "lines"))
+
+```
+
+
+
+
+
+Chi Square
+```{r}
+# Perform chi-square test for independence
+
+#The legal minimum carapace size for lobster is 82.6 mm. What proportion of observed lobsters at each site are above the legal minimum? Does that proportion differ significantly across the 5 sites? 
+
+MPA17_summary <- lobstar_abs_tidy %>% 
+  filter(YEAR == "2017") %>% 
+  mutate(PROTECTED = case_when(
+    SITE == "IVEE" ~ "MPA",
+    SITE == "NAPL" ~ "MPA",
+    SITE == "AQUE" ~ "Non-MPA",
+    SITE == "CARP" ~ "Non-MPA",
+    SITE == "MOHK" ~ "Non-MPA")) %>% 
+  filter(SIZE > 82.6) %>% 
+  group_by(SITE) %>% 
+  summarize(
+    LEGAL_LOBSTARS = round(mean(SIZE),2) 
+  )
+
+## Summary tables by year. A table of all years was too long, so N split them up
+##2012
+
+MPA17_table <- MPA17_summary %>%
+  kable(align = "c", col.names = c("Site", "Percentage")) %>%
+  kable_styling(bootstrap_options = c("striped", "consensed"), full_width = F) %>%
+  add_header_above(c("Proportion of Legal Lobsters Across Sites in 2017" = 2))
+
+MPA17_chi <- chisq.test(MPA17_summary$LEGAL_LOBSTARS)
+MPA17_chi
 
 ```
 
