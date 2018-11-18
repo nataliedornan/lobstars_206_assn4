@@ -252,18 +252,9 @@ lobstah_ph ## Confirmed one significant difference between sizes at NAPL and IVE
 
 ```{r}
 #Create New data frame for MPA only data, and data only from 2012 and 2017
-#Create New data frame for MPA only data, and data only from 2012 and 2017
+#Tables looked gross side by side, so made two and will 
 MPA12 <- lobstar_abs_tidy %>% 
-  filter(YEAR == "2012") %>% 
-  mutate(PROTECTED = case_when(
-    SITE == "IVEE" ~ "MPA",
-    SITE == "NAPL" ~ "MPA",
-    SITE == "AQUE" ~ "Non-MPA",
-    SITE == "CARP" ~ "Non-MPA",
-    SITE == "MOHK" ~ "Non-MPA"))
-
-MPA17 <- lobstar_abs_tidy %>% 
-  filter(YEAR == "2017") %>% 
+  filter(YEAR == "2012" | YEAR == "2017") %>% 
   mutate(PROTECTED = case_when(
     SITE == "IVEE" ~ "MPA",
     SITE == "NAPL" ~ "MPA",
@@ -272,17 +263,14 @@ MPA17 <- lobstar_abs_tidy %>%
     SITE == "MOHK" ~ "Non-MPA"))
 
 MPA_Graph_12 <- ggplot(MPA12, aes(x= SITE, y= SIZE))+
-  geom_boxplot(aes(color = PROTECTED))+
+  geom_boxplot(aes(fill = PROTECTED))+
+  facet_wrap(~ YEAR)+
   theme_classic()+
+  scale_x_discrete(limits = c("AQUE", "CARP", "MOHK", "IVEE", "NAPL"))+
   ylab("Carapice Length")
 
 
-MPA_Graph_17 <- ggplot(MPA17, aes(x= SITE, y= SIZE))+
-  geom_boxplot(aes(color = PROTECTED))+
-  theme_classic()+
-  ylab("Carapice Length")
+MPA_Graph_12 + theme(panel.spacing = unit(3, "lines"))
 
-
-MPA_Graph_12; MPA_Graph_17
 ```
 
