@@ -215,6 +215,8 @@ Lobstah carapace length (mm)
 lobstah_body <- lobstar_abs_tidy %>%
   expand.dft(freq = "COUNT")
 
+lobs
+
 #I think we should use a bar/column graph, and add error bars and the letters indicating what's significant. Just an idea.
 
 lobstah_boxplot <- filter(lobstah_body, YEAR == "2017") %>%
@@ -242,5 +244,10 @@ lobstah_levene <- leveneTest(SIZE ~ SITE, data = lobstah_body)
 
 lobstah_levene
 
+penguin_aov <- aov(SIZE ~ SITE, data = lobstah_body)
+
+penguin_sum <- summary(penguin_aov)
+
+penguin_sum
 ```
 
