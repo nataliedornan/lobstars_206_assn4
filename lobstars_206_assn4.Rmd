@@ -211,24 +211,13 @@ trap_pres_two <- lobstar_traps %>%
 
 Lobstah carapace length (mm)
 ```{r}
+# Create expanded dataframe of lobster carapace length in 2017
 
 lobstah_body <- lobstar_abs_tidy %>%
-  expand.dft(freq = "COUNT")
+  expand.dft(freq = "COUNT") %>%
+  filter(YEAR == "2017")
 
-lobs
-
-#I think we should use a bar/column graph, and add error bars and the letters indicating what's significant. Just an idea.
-
-lobstah_boxplot <- filter(lobstah_body, YEAR == "2017") %>%
-  ggplot(aes(x = SITE, y = SIZE)) + 
-  geom_boxplot(aes(color = SITE), width = 0.35) +
-  labs(x = "Site", y = "Carapace Length (mm)") +
-  theme_classic() +
-  theme(legend.position = "none") +
-  ggtitle("Carapice Length of Lobsters at Different Sites in the SB Channel")
-
-
-## Levenes test for varience
+## Levene's test for varience, can create kable table of this later
 
 variences <- lobstah_body %>% 
   group_by(SITE) %>% 
@@ -238,19 +227,25 @@ variences <- lobstah_body %>%
     variance = var(SIZE)
   )
 
-variences
-
+variences #Don't look that different
 
 #Levene's test for equal variances (and keep in mind the general rule: if the greatest variances is < 4x bigger than the smallest variance, then usually those are "close enough" to assume equal variance)
+
 lobstah_levene <- leveneTest(SIZE ~ SITE, data = lobstah_body)
 
-lobstah_levene
+lobstah_levene # Levenes test results
 
-penguin_aov <- aov(SIZE ~ SITE, data = lobstah_body)
+# ANOVA for testing means
 
-penguin_sum <- summary(penguin_aov)
+lobstah_aov <- aov(SIZE ~ SITE, data = lobstah_body)
 
-penguin_sum
+lobstah_sum <- summary(penguin_aov)
+
+lobstah_sum ## ANOVA Result: weak significance? (p=0.0354)
+
+lobstah_ph <- TukeyHSD(lobstah_aov)
+
+lobstah_ph ## Confirmed one significant difference between sizes at NAPL and IVEE
 ```
 
 
