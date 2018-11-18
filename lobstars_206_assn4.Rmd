@@ -272,7 +272,7 @@ MPA_Graph_12 <- ggplot(MPA12, aes(x= SITE, y= SIZE))+
 MPA_Graph_12 + theme(panel.spacing = unit(3, "lines"))
 
 ## Testing differences in means between carapace length in protected and non-protected sites
-
+ 
 ##H0: There is no difference in carapace lengths between protected and non-protected sites
 ##HA: There is a difference in carapace lenths between protected and nonprotected sites
 
