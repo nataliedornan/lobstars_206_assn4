@@ -157,12 +157,29 @@ qq_plot <- ggplot(lobstar_abs_tidy, aes(sample=SIZE)) +
 abs_site_scatter <- ggplot(lobstar_abs_one, aes(x = YEAR, y = SUM)) +
   geom_point() +
   geom_line(aes(col = SITE))+
-  ggtitle("Abundance of Lobsters")+
+  ggtitle("Abundance of Lobsters \nAcross Sites in the Santa Barbara Channel, 2012-2017 \n")+
   ylab("Count")+
+  xlab("Year")+
   theme_classic()
 abs_site_scatter
 
 
+abs_site_scatter2 <-abs_site_scatter + scale_colour_discrete(
+                            breaks=c("AQUE", "CARP", "IVEE", "MOHK", "NAPL"),
+                            labels=c("Arroyo Quemado", "Carpintera", "Isla Vista", "Mohawk", "Naples"), name= "Site")+
+  theme(plot.title = element_text(hjust = 0.50))
+
+abs_site_scatter2
+```
+
+
+
+
+
+
+
+
+```{r}
 #Take out sites IVEE and NAPL
 trap_pres_one <- lobstar_traps %>% 
   group_by(YEAR, SITE) %>% 
@@ -177,13 +194,15 @@ trap_pres_scatter <- ggplot(trap_pres_one, aes(x = YEAR, y = SUM))+
   geom_point()+
   geom_line(aes(col = SITE))+
   theme_classic()+
-  ggtitle("Fishing Pressure \n")+
-  ylab("Trap Buoys")
-
+  ggtitle("Fishing Pressure on Lobsters \nAcross Sites in the Santa Barbara Channel, 2012-2017")+
+  ylab("Trap Buoys")+
+  xlab("Year")
 
 trap_pres_scatter2 <-trap_pres_scatter + scale_colour_discrete(
                             breaks=c("AQUE", "CARP", "IVEE", "MOHK"),
-                            labels=c("AQUE", "CARP", "IVEE & NAPL", "MOHK"))
+                            labels=c("Arroyo Quemado", "Carpintera", "Isla Vista & Naples", "Mohawk"),
+                            name= "Site")+
+  theme(plot.title = element_text(hjust = 0.50))
 
 trap_pres_scatter2
 ```
@@ -228,6 +247,14 @@ variences <- lobstah_body %>%
 
 variences #Don't look that different
 
+
+variences_table <- variences %>%
+  kable(align = "c", col.names = c("HI","Illegal", "Legal")) %>%
+  kable_styling(bootstrap_options = c("striped", "consensed"), full_width = F) %>%
+  add_header_above(c("Proportion of Legal Lobsters Across Sites in 2017" = 3))
+
+
+
 #Levene's test for equal variances (and keep in mind the general rule: if the greatest variances is < 4x bigger than the smallest variance, then usually those are "close enough" to assume equal variance)
 
 lobstah_levene <- leveneTest(SIZE ~ SITE, data = lobstah_body)
@@ -266,11 +293,21 @@ MPA_Graph_12 <- ggplot(MPA12, aes(x= SITE, y= SIZE))+
   facet_wrap(~ YEAR)+
   theme_classic()+
   scale_x_discrete(limits = c("AQUE", "CARP", "MOHK", "IVEE", "NAPL"))+
-  ylab("Carapice Length")
+  ylab("Carapace Length (mm)")+
+  xlab("Site")+
+  ggtitle("Size Distribution of Lobsters at Santa Barbara Channel LTER Sites")+
+  scale_fill_discrete(name = "Protected Status")
 
 
 MPA_Graph_12 + theme(panel.spacing = unit(3, "lines"))
+```
 
+
+
+
+
+
+```{r}
 ## Testing differences in means between carapace length in protected and non-protected sites
  
 ##H0: There is no difference in carapace lengths between protected and non-protected sites
@@ -329,8 +366,7 @@ Chi Square
 
 #The legal minimum carapace size for lobster is 82.6 mm. What proportion of observed lobsters at each site are above the legal minimum? Does that proportion differ significantly across the 5 sites? 
 
-MPA17_summary <- lobstar_abs_tidy %>% 
-  filter(YEAR == "2017") %>% 
+MPA17_summary <- lobstah_body %>% 
   mutate(PROTECTED = case_when(
     SITE == "IVEE" ~ "MPA",
     SITE == "NAPL" ~ "MPA",
@@ -351,8 +387,89 @@ MPA17_table <- MPA17_summary %>%
   kable_styling(bootstrap_options = c("striped", "consensed"), full_width = F) %>%
   add_header_above(c("Proportion of Legal Lobsters Across Sites in 2017" = 2))
 
-MPA17_chi <- chisq.test(MPA17_summary$LEGAL_LOBSTARS)
-MPA17_chi
 
+MPA17_table <- MPA17_chi_df %>%
+  kable(align = "c", col.names = c("Site", "Percentage")) %>%
+  kable_styling(bootstrap_options = c("striped", "consensed"), full_width = F) %>%
+  add_header_above(c("Proportion of Legal Lobsters Across Sites in 2017" = 2))
+
+
+
+# Make a contingency table for lobster carapace size:
+MPA17_chi_df<- lobstar_abs_tidy %>% # Create data frame for lobster carapace size from "lob_abun_simple" data frame (created in Problem 2), which has data in tidy format
+filter(YEAR == 2017) %>% 
+mutate(Legality = ifelse(SIZE < 82.6, "ILLEGAL", "LEGAL")) %>% 
+select(SITE, Legality) %>% 
+count(SITE, Legality) %>% 
+spread(Legality, n) %>% 
+select(-SITE) 
+  
+rownames(MPA17_chi_df) <- c("Arroyo Quemado", "Carpinteria", "Isla Vista", "Mohawk", "Naples")
+
+MPA17_chi_df
+
+
+
+#Tidy Format Data
+#1. Filter out all Count = 0 data
+#2. Select out shit we don't need
+#3. Filter for only 2017
+#4. Make it tidy 
+#5. Add legal v nonlegal
+
+
+legal_lobster <- lobstar_abs %>% 
+  filter(COUNT != 0) %>% 
+  select(-DATE, -MONTH, -SBC_LTER_TRANSECT, -LOBSTER_TRANSECT) %>% 
+  filter(YEAR == "2017") %>% 
+  as.data.frame(lobstar_abs) %>% 
+  expand.dft(freq = "COUNT") %>% 
+  mutate(LEGAL = ifelse(SIZE < 82.6, "ILLEGAL", "LEGAL")) %>% 
+  select(SITE, LEGAL) %>% 
+  count(SITE, LEGAL) %>% 
+  spread(LEGAL, n) %>% 
+  select(-SITE)
+
+
+lobstar_x2 <- chisq.test(legal_lobster)
+
+lob_prop <- prop.table(as.matrix(legal_lobster), 1) # Look at the actual proportions
+lob_prop
+
+
+
+```
+
+
+
+
+
+
+
+
+```{r}
+#Make a stupid kable table
+MPA17_kabletable<- lobstar_abs_tidy %>% # Create data frame for lobster carapace size from "lob_abun_simple" data frame (created in Problem 2), which has data in tidy format
+  filter(YEAR == 2017) %>% 
+  mutate(Legality = ifelse(SIZE < 82.6, "ILLEGAL", "LEGAL")) %>% 
+  select(SITE, Legality) %>% 
+  count(SITE, Legality) %>% 
+  spread(Legality, n) %>% 
+  mutate(SITE = case_when(
+    SITE == "IVEE" ~ "Isla Vista",
+    SITE == "NAPL" ~ "Naples",
+    SITE == "AQUE" ~ "Arroyo Quemado",
+    SITE == "CARP" ~ "Carpinteria",
+    SITE == "MOHK" ~ "Mohawk"))
+
+lob_kabletable <- prop.table(as.matrix(MPA17_kabletable), 1) # Look at the actual proportions
+lob_kabletable
+
+MPA_Legality <- lob_prop %>%
+  kable(align = "c", col.names = c("HI","Illegal", "Legal")) %>%
+  kable_styling(bootstrap_options = c("striped", "consensed"), full_width = F) %>%
+  add_header_above(c("Proportion of Legal Lobsters Across Sites in 2017" = 3))
+
+View(MPA_Legality)
 ```
 
