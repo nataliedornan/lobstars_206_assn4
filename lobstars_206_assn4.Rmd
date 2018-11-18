@@ -244,3 +244,21 @@ lobstah_levene
 
 ```
 
+
+
+```{r}
+#Create New data frame for MPA only data, and data only from 2012 and 2017
+MPA <- lobstar_abs_tidy %>% 
+  filter(YEAR == "2012" | YEAR == "2017") %>% 
+  mutate(PROTECTED = case_when(
+    SITE == "IVEE" ~ "MPA",
+    SITE == "NAPL" ~ "MPA",
+    SITE == "AQUE" ~ "Non-MPA",
+    SITE == "CARP" ~ "Non-MPA",
+    SITE == "MOHK" ~ "Non-MPA"))
+
+MPA_ <- ggplot(MPA, aes(x= SITE, y= SIZE))+
+  geom_boxplot(aes(color = PROTECTED))+
+  theme_classic()
+```
+
