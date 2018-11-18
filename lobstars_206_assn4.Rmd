@@ -13,7 +13,7 @@ knitr::opts_chunk$set(echo = TRUE)
 
 ```{r, include=FALSE}
 
-# install.packages("vcdExtra") Natalie installed new package
+# install.packages("vcdExtra") Natalie installed new package ("car")
 library(tidyverse)
 library(kableExtra)
 library(plotly)
@@ -21,7 +21,7 @@ library(vcdExtra)
 library(magrittr)
 library(car)
 
-lobstar_abs <- read_csv("lobster_size_abundance.csv") #data frame with lobster abundance datac
+lobstar_abs <- read_csv("lobster_size_abundance.csv") #data frame with lobster abundance data
 
 lobstar_traps <- as.data.frame(read_csv("lobster_traps.csv")) # data frame with lobster trap data
 
@@ -133,8 +133,10 @@ lobstar_sum_table_17
 
 #------------------------------EXPLORATORY DATA ANALYSIS---------------------------------
 lobstar_abs_tidy <- lobstar_abs %>% 
-  filter(COUNT != "0")
-
+  as.data.frame(lobstar_abs_tidy) %>%
+  filter(COUNT != "0") %>%
+  expand.dft(freq = "COUNT")
+  
 
 hist <- ggplot(lobstar_abs_tidy, aes(x=SIZE)) +
   geom_histogram() +
@@ -213,11 +215,13 @@ Lobstah carapace length (mm) in 2017
 
 Lobstah carapace length (mm)
 >>>>>>> 56eed8527887aaa860d755be7b51cf204419406d
+
+
+
 ```{r}
 # Create expanded dataframe of lobster carapace length in 2017
 
 lobstah_body <- lobstar_abs_tidy %>%
-  expand.dft(freq = "COUNT") %>%
   filter(YEAR == "2017")
 
 ## Levene's test for varience, can create kable table of this later
@@ -251,11 +255,11 @@ lobstah_aov <- aov(SIZE ~ SITE, data = lobstah_body)
 
 lobstah_sum <- summary(lobstah_aov)
 
-lobstah_sum ## ANOVA Result: weak significance? (p=0.0354)
+lobstah_sum ##ANOVA Result: weak significance? (p=0.0354)
 
 lobstah_ph <- TukeyHSD(lobstah_aov) #Tukey's post hoc
 
-lobstah_ph ## Confirmed one significant difference between sizes at NAPL and IVEE
+lobstah_ph ##Confirmed one significant difference between sizes at NAPL and IVEE
 ```
 
 
@@ -288,6 +292,7 @@ MPA_Graph_12 + theme(panel.spacing = unit(3, "lines"))
 ##HA: There is a difference in carapace lenths between protected and nonprotected sites
 
 ##2012
+
 mpa12_protected <- MPA12 %>%
   filter(PROTECTED == "MPA") %>%
   filter(YEAR == "2012")
@@ -296,12 +301,17 @@ mpa12_unprotected <- MPA12 %>%
   filter(PROTECTED == "Non-MPA") %>%
   filter(YEAR == "2012")
 
-mpa12_t <- t.test(mpa12_protected$SIZE, mpa12_unprotected$SIZE)
+var_test12 = var.test(mpa12_protected$SIZE, mpa12_unprotected$SIZE)
 
-mpa12_t ## p = 0.1806
+var_test12
+
+mpa12_t <- t.test(mpa12_protected$SIZE, mpa12_unprotected$SIZE, var.equal = TRUE)
+
+mpa12_t
 
 
 ##2017
+
 mpa17_protected <- MPA12 %>%
   filter(PROTECTED == "MPA") %>%
   filter(YEAR == "2017")
@@ -310,16 +320,33 @@ mpa17_unprotected <- MPA12 %>%
   filter(PROTECTED == "Non-MPA") %>%
   filter(YEAR == "2017")
 
+var_test17 = var.test(mpa17_protected$SIZE, mpa17_unprotected$SIZE)
+
+var_test17
+
 mpa17_t <- t.test(mpa17_protected$SIZE, mpa17_unprotected$SIZE)
 
 mpa17_t
 
+
 ## Between years
+var_test = var.test(mpa12_protected$SIZE, mpa17_protected$SIZE)
 
-comp_t <- t.test(mpa12_protected$SIZE, mpa17_protected$SIZE)
+var_test
 
-comp_t
+comp_t_MPA <- t.test(mpa12_protected$SIZE, mpa17_protected$SIZE, var.equal = TRUE)
 
+comp_t_MPA
+
+var_test = var.test(mpa12_unprotected$SIZE, mpa17_unprotected$SIZE)
+
+var_test
+
+comp_t_NonMPA <- t.test(mpa12_unprotected$SIZE, mpa17_unprotected$SIZE, var.equal = TRUE)
+
+comp_t_NonMPA
+
+##Cohens d
 
 ```
 
