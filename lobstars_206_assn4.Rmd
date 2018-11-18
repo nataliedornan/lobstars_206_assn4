@@ -197,19 +197,7 @@ Daphne RE: graphs.
 
 
 Question 2:
-```{r}
-trap_pres_two <- lobstar_traps %>% 
-  expand.dft(freq = "TRAPS") %>%
-  summarize(
-    mean_body = round(mean(SIZE),2),
-    sd_body = round(sd(SIZE),2),
-  )
-   
-
-
-```
-
-Lobstah carapace length (mm)
+Lobstah carapace length (mm) in 2017
 ```{r}
 # Create expanded dataframe of lobster carapace length in 2017
 
@@ -229,6 +217,13 @@ variences <- lobstah_body %>%
 
 variences #Don't look that different
 
+lobstar_var_table <- variences %>%
+  kable(align = "c", col.names = c("Site", "Mean", "Standard Deviation", "Varience")) %>%
+  kable_styling(bootstrap_options = c("striped", "consensed"), full_width = F) %>%
+  add_header_above(c("Carapice Length (mm) of California Spiny Lobsters at 5 Locations in 2017" = 4)) # add header above table columns
+
+lobstar_var_table
+
 #Levene's test for equal variances (and keep in mind the general rule: if the greatest variances is < 4x bigger than the smallest variance, then usually those are "close enough" to assume equal variance)
 
 lobstah_levene <- leveneTest(SIZE ~ SITE, data = lobstah_body)
@@ -239,7 +234,7 @@ lobstah_levene # Levenes test results
 
 lobstah_aov <- aov(SIZE ~ SITE, data = lobstah_body)
 
-lobstah_sum <- summary(penguin_aov)
+lobstah_sum <- summary(lobstah_aov)
 
 lobstah_sum ## ANOVA Result: weak significance? (p=0.0354)
 
@@ -279,10 +274,12 @@ MPA_Graph_12 + theme(panel.spacing = unit(3, "lines"))
 
 ##2012
 mpa12_protected <- MPA12 %>%
-  filter(PROTECTED == "MPA")
+  filter(PROTECTED == "MPA") %>%
+  filter(YEAR == "2012")
       
 mpa12_unprotected <- MPA12 %>%
-  filter(PROTECTED == "Non-MPA")
+  filter(PROTECTED == "Non-MPA") %>%
+  filter(YEAR == "2012")
 
 mpa12_t <- t.test(mpa12_protected$SIZE, mpa12_unprotected$SIZE)
 
@@ -290,11 +287,13 @@ mpa12_t ## p = 0.1806
 
 
 ##2017
-mpa17_protected <- MPA17 %>%
-  filter(PROTECTED == "MPA")
+mpa17_protected <- MPA12 %>%
+  filter(PROTECTED == "MPA") %>%
+  filter(YEAR == "2017")
       
-mpa17_unprotected <- MPA17 %>%
-  filter(PROTECTED == "Non-MPA")
+mpa17_unprotected <- MPA12 %>%
+  filter(PROTECTED == "Non-MPA") %>%
+  filter(YEAR == "2017")
 
 mpa17_t <- t.test(mpa17_protected$SIZE, mpa17_unprotected$SIZE)
 
@@ -306,17 +305,6 @@ comp_t <- t.test(mpa12_protected$SIZE, mpa17_protected$SIZE)
 
 comp_t
 
-## At IVEE
-
-ivee12 <- mpa12_protected %>%
-  filter(SITE == "IVEE")
-
-ivee17 <- mpa17_protected %>%
-  filter(SITE == "IVEE")
-
-ivee_t <- t.test(ivee12$SIZE, ivee17$SIZE)
-
-ivee_t
 
 ```
 
