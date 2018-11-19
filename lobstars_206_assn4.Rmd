@@ -250,27 +250,19 @@ variences <- lobstah_body %>%
   summarize(
     mean = mean(SIZE),
     sd = sd(SIZE),
-    variance = var(SIZE)
+    variance = var(SIZE),
+    sample_size = length(SIZE)
   )
 
 variences #Don't look that different
 
-<<<<<<< HEAD
-
-variences_table <- variences %>%
-  kable(align = "c", col.names = c("HI","Illegal", "Legal")) %>%
-  kable_styling(bootstrap_options = c("striped", "consensed"), full_width = F) %>%
-  add_header_above(c("Proportion of Legal Lobsters Across Sites in 2017" = 3))
-
-
-=======
 lobstar_var_table <- variences %>%
-  kable(align = "c", col.names = c("Site", "Mean", "Standard Deviation", "Varience")) %>%
+  kable(align = "c", col.names = c("Site", "Mean", "Standard Deviation", "Varience", "Sample Size (n)")) %>%
   kable_styling(bootstrap_options = c("striped", "consensed"), full_width = F) %>%
-  add_header_above(c("Carapice Length (mm) of California Spiny Lobsters at 5 Locations in 2017" = 4)) # add header above table columns
+  add_header_above(c("Carapice Length (mm) of California Spiny Lobsters at 5 Locations in 2017" = 5)) # add header above table columns
 
 lobstar_var_table
->>>>>>> 74afd0c929cb37a51bfe5619b3b0606dd4a569bf
+
 
 #Levene's test for equal variances (and keep in mind the general rule: if the greatest variances is < 4x bigger than the smallest variance, then usually those are "close enough" to assume equal variance)
 
